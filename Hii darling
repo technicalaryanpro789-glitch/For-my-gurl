@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Juhi ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom aesthetics */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        }
+        
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Typing cursor animation */
+        .cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #ec4899; /* Pink-500 */
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Float animation for the card */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 overflow-hidden">
+
+    <!-- Main Container -->
+    <div id="main-card" class="float relative bg-white/80 backdrop-blur-sm p-8 md:p-12 rounded-3xl shadow-2xl w-11/12 max-w-md text-center border border-white/50 transition-all duration-500 min-h-[350px] flex flex-col items-center justify-center">
+        
+        <!-- Decoration Heart -->
+        <div class="absolute -top-6 -right-6 text-6xl opacity-20 rotate-12">❤️</div>
+        <div class="absolute -bottom-6 -left-6 text-6xl opacity-20 -rotate-12">🌹</div>
+
+        <!-- Text Area -->
+        <div id="text-wrapper" class="w-full flex-grow flex items-center justify-center mb-6">
+            <h1 id="typing-text" class="text-3xl md:text-4xl text-gray-800 leading-relaxed handwriting font-bold">
+                <!-- Text injected via JS -->
+            </h1>
+        </div>
+
+        <!-- Button Area -->
+        <div id="button-wrapper" class="h-14 opacity-0 transition-opacity duration-700">
+            <button id="next-btn" onclick="nextScene()" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-pink-500/40 hover:-translate-y-1 transform transition-all duration-300 active:scale-95 text-lg">
+                Start
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const scenes = [
+            {
+                text: "Hello Juhi ❤️",
+                btn: "Click to know about yourself"
+            },
+            {
+                text: "You are the prettiest girl I've ever seen...<br>And I love you. 🥺",
+                btn: "Really?"
+            },
+            {
+                text: "I will never leave you.<br>And I know you'd never let me go. 🤞",
+                btn: "Bye"
+            },
+            {
+                text: "Can you come back online on Insta now? 📲",
+                btn: null // End of flow
+            }
+        ];
+
+        let currentScene = 0;
+        const textElement = document.getElementById('typing-text');
+        const btnWrapper = document.getElementById('button-wrapper');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Typing effect function
+        function typeWriter(text, i, fnCallback) {
+            // Handle HTML line breaks manually for typing effect
+            // We use a temporary simple parser to handle <br>
+            
+            if (i < text.length) {
+                // Check if next characters are a line break
+                if (text.substring(i, i + 4) === "<br>") {
+                    textElement.innerHTML = text.substring(0, i) + "<br>" + '<span class="cursor"></span>';
+                    i += 4;
+                } else {
+                    textElement.innerHTML = text.substring(0, i+1) + '<span class="cursor"></span>';
+                    i++;
+                }
+                
+                // Randomize typing speed slightly for realism (30ms to 70ms)
+                setTimeout(function() {
+                    typeWriter(text, i, fnCallback)
+                }, Math.random() * 40 + 30);
+            } else {
+                // remove cursor at the end (optional, keeping it looks nice actually)
+                 textElement.innerHTML = text; // remove cursor block if desired, or keep it
+                
+                // Invoke callback
+                if (typeof fnCallback == 'function') {
+                    setTimeout(fnCallback, 500);
+                }
+            }
+        }
+
+        function loadScene(index) {
+            // Reset state
+            btnWrapper.classList.remove('opacity-100');
+            btnWrapper.classList.add('opacity-0');
+            textElement.innerHTML = '<span class="cursor"></span>';
+            
+            // Get current scene data
+            const sceneData = scenes[index];
+
+            // Start typing
+            setTimeout(() => {
+                typeWriter(sceneData.text, 0, function() {
+                    // Show button if it exists
+                    if (sceneData.btn) {
+                        nextBtn.innerText = sceneData.btn;
+                        btnWrapper.classList.remove('opacity-0');
+                        btnWrapper.classList.add('opacity-100');
+                    }
+                });
+            }, 500);
+        }
+
+        function nextScene() {
+            currentScene++;
+            if (currentScene < scenes.length) {
+                loadScene(currentScene);
+            }
+        }
+
+        // Initialize
+        window.onload = function() {
+            // Start the first scene
+            loadScene(0);
+        };
+    </script>
+</body>
+</html>
+
